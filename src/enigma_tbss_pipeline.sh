@@ -53,7 +53,7 @@ antsRegistrationSyNQuick.sh \
     -m fa.nii.gz \
     -x template_FA_mask.nii.gz,mask.nii.gz \
     -o fa_reg \
-    &> antsRegistrationSyNQuick.log
+    &> antsregistration.log
 
 # Need to do some of the stuff in tbss_3_postreg now. It is 
 # intended for a custom multi-subject template and it
