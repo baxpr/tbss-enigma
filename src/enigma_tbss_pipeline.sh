@@ -16,7 +16,7 @@ md_threshold=0.0003
 # (2) Copy all needed images into a working directory and change to that directory
 #     so future commands work correctly (e.g. FA subdir is assumed by tbss commands)
 cd "${out_dir}" || exit 1
-cp "${fa_niigz}" fa.nii.gz
+cp "${fa_niigz}" fa_unmasked.nii.gz
 cp "${md_niigz}" md.nii.gz
 cp $FSLDIR/data/standard/FMRIB58_FA_1mm.nii.gz template_FA.nii.gz
 cp $FSLDIR/data/standard/FMRIB58_FA-skeleton_1mm.nii.gz template_FA_skeleton.nii.gz
@@ -40,16 +40,20 @@ cp $FSLDIR/data/standard/FMRIB58_FA-skeleton_1mm.nii.gz template_FA_skeleton.nii
 # First make a tighter/more accurate subject mask using thresholded MD image
 fslmaths "${md_niigz}" -thr ${md_threshold} -bin mask
 
+# Mask the input FA image
+fslmaths fa_unmasked -mas mask fa
+
 # And a mask for the template FA image
 fslmaths template_FA -bin template_FA_mask
 
 # Do the registration with ANTS
-antsRegistrationSyN.sh \
+antsRegistrationSyNQuick.sh \
     -d 3 -y 1 \
     -f $FSLDIR/data/standard/FMRIB58_FA_1mm.nii.gz \
     -m fa.nii.gz \
-    -x "template_FA_mask.nii.gz,mask.nii.gz"
-    -o fa_reg
+    -x template_FA_mask.nii.gz,mask.nii.gz \
+    -o fa_reg \
+    &> antsRegistrationSyNQuick.log
 
 # Need to do some of the stuff in tbss_3_postreg now. It is 
 # intended for a custom multi-subject template and it
