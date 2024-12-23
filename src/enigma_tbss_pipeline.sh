@@ -75,8 +75,27 @@ antsRegistrationSyNQuick.sh \
 # (6) Compute distance maps
 # Original command is
 #    tbss_4_prestats -0.049
-# But we will select out just the necessary bits here
-# FIXME
+# But we will select out just the necessary bits from tbss_4_prestats
+
+# Binarize the FA template skeleton
+fslmaths template_FA_skeleton -bin template_FA_skeleton_mask
+
+# Create template distance map
+fslmaths template_FA_mask -mul -1 -add 1 -add template_FA_skeleton_mask template_FA_skeleton_mask_dst
+distancemap -i template_FA_skeleton_mask_dst -o template_FA_skeleton_mask_dst
+
+# Project warped subject FA data onto skeleton
+# FIXME what is the threshold doing here? Do we want 0.2, 0.049, -0.049 ?
+# FIXME what is the input image supposed to be?
+# FIXME why is this specific to LowerCingulum?
+tbss_skeleton \
+    -i template_FA \
+    -p -0.049 \
+    template_FA_skeleton_mask_dst \
+    ${FSLDIR}/data/standard/LowerCingulum_1mm \
+    fa_regWarped \
+    fa_regWarped_skeletonised
+
 
 # (7) Reorganize files to parallelize for multiple subjs
 
