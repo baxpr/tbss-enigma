@@ -84,7 +84,9 @@ fslmaths template_FA_skeleton -bin template_FA_skeleton_mask
 fslmaths template_FA_mask -mul -1 -add 1 -add template_FA_skeleton_mask template_FA_skeleton_mask_dst
 distancemap -i template_FA_skeleton_mask_dst -o template_FA_skeleton_mask_dst
 
-# Project warped subject FA data onto skeleton
+# (7) Reorganize files to parallelize for multiple subjs
+
+# (8) Project warped subject FA data onto skeleton
 # FIXME what is the threshold doing here? Do we want 0.2, 0.049, -0.049 ?
 # FIXME what is the input image supposed to be?
 # FIXME why is this specific to LowerCingulum?
@@ -95,17 +97,5 @@ tbss_skeleton \
     ${FSLDIR}/data/standard/LowerCingulum_1mm \
     fa_regWarped \
     fa_regWarped_skeletonised
-
-
-# (7) Reorganize files to parallelize for multiple subjs
-
-# (8) TBSS projection / skeletonize
-#tbss_skeleton \
-#    -i ./FA_individ/${subj}/FA/${subj}_masked_FA.nii.gz \
-#    -p 0.049 /enigmaDTI/TBSS/ENIGMA_targets_edited/mean_FA_skeleton_mask_dst \
-#    ${FSLPATH}/data/standard/LowerCingulum_1mm.nii.gz \
-#    ./FA_individ/${subj}/FA /${subj}_masked_FA.nii.gz \
-#    ./FA_individ/${subj}/stats/${subj}_masked_FAske l.nii.gz \
-#    -s /enigmaDTI/TBSS/ENIGMA_targets_edited/mean_FA_skeleton_mask.nii.gz
 
 
