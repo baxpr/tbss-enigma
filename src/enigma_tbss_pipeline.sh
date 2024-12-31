@@ -18,9 +18,10 @@ md_threshold=0.0003
 cd "${out_dir}" || exit 1
 cp "${fa_niigz}" fa_unmasked.nii.gz
 cp "${md_niigz}" md.nii.gz
-cp $FSLDIR/data/standard/FMRIB58_FA_1mm.nii.gz template_FA.nii.gz
-cp $FSLDIR/data/standard/FMRIB58_FA-skeleton_1mm.nii.gz template_FA_skeleton.nii.gz
-
+cp ${enigma_dir}/ENIGMA_DTI_FA.nii.gz                     template_FA.nii.gz
+cp ${enigma_dir}/ENIGMA_DTI_FA_mask.nii.gz                template_mask.nii.gz
+cp ${enigma_dir}/ENIGMA_DTI_FA_skeleton_mask.nii.gz       template_skeleton_mask.nii.gz
+cp ${enigma_dir}/ENIGMA_DTI_FA_skeleton_mask_dst.nii.gz   template_skeleton_mask_dst.nii.gz
 
 # (3) Erode FA image slightly for tbss_2_reg
 #     Eroded FA image will be ${out_dir}/FA/fa_FA.nii.gz
@@ -43,13 +44,10 @@ fslmaths "${md_niigz}" -thr ${md_threshold} -bin mask
 # Mask the input FA image
 fslmaths fa_unmasked -mas mask fa
 
-# And a mask for the template FA image
-fslmaths template_FA -bin template_FA_mask
-
 # Do the registration with ANTS
-antsRegistrationSyNQuick.sh \
+antsRegistrationSyN.sh \
     -d 3 -y 1 \
-    -f $FSLDIR/data/standard/FMRIB58_FA_1mm.nii.gz \
+    -f template_FA.nii.gz \
     -m fa.nii.gz \
     -x template_FA_mask.nii.gz,mask.nii.gz \
     -o fa_reg \
@@ -78,11 +76,11 @@ antsRegistrationSyNQuick.sh \
 # But we will select out just the necessary bits from tbss_4_prestats
 
 # Binarize the FA template skeleton
-fslmaths template_FA_skeleton -bin template_FA_skeleton_mask
+#fslmaths template_FA_skeleton -bin template_FA_skeleton_mask
 
 # Create template distance map
-fslmaths template_FA_mask -mul -1 -add 1 -add template_FA_skeleton_mask template_FA_skeleton_mask_dst
-distancemap -i template_FA_skeleton_mask_dst -o template_FA_skeleton_mask_dst
+#fslmaths template_FA_mask -mul -1 -add 1 -add template_FA_skeleton_mask template_FA_skeleton_mask_dst
+#distancemap -i template_FA_skeleton_mask_dst -o template_FA_skeleton_mask_dst
 
 # (7) Reorganize files to parallelize for multiple subjs
 
