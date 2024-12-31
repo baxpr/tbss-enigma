@@ -92,7 +92,7 @@ distancemap -i template_FA_skeleton_mask_dst -o template_FA_skeleton_mask_dst
 # FIXME why is this specific to LowerCingulum?
 tbss_skeleton \
     -i template_FA \
-    -p -0.049 \
+    -p 0.2 \
     template_FA_skeleton_mask_dst \
     ${FSLDIR}/data/standard/LowerCingulum_1mm \
     fa_regWarped \
