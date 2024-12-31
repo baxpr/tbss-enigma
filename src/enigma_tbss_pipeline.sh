@@ -3,6 +3,8 @@
 # Reference: ../enigma/ENIGMA_TBSS_protocol_USC.pdf
 #   (original source https://enigma.ini.usc.edu/wp-content/uploads/DTI_Protocols/ENIGMA_TBSS_protocol_USC.pdf)
 
+export PATH=/usr/local/ants-2.5.4/bin:${PATH}
+
 fa_niigz=../INPUTS/dwmri_tensor_fa.nii.gz
 md_niigz=../INPUTS/dwmri_tensor_md.nii.gz
 out_dir=../OUTPUTSants
@@ -49,7 +51,7 @@ antsRegistrationSyN.sh \
     -d 3 -y 1 \
     -f template_FA.nii.gz \
     -m fa.nii.gz \
-    -x template_FA_mask.nii.gz,mask.nii.gz \
+    -x template_mask.nii.gz,mask.nii.gz \
     -o fa_reg \
     &> antsregistration.log
 
@@ -85,15 +87,14 @@ antsRegistrationSyN.sh \
 # (7) Reorganize files to parallelize for multiple subjs
 
 # (8) Project warped subject FA data onto skeleton
-# FIXME what is the threshold doing here? Do we want 0.2, 0.049, -0.049 ?
-# FIXME what is the input image supposed to be?
-# FIXME why is this specific to LowerCingulum?
+# What is the input image supposed to be? It affects resulting values.
+# ENIGMA protocol step 8 is using the subject FA image with -s option (ENIGMA_TBSS_protocol_USC.pdf).
 tbss_skeleton \
-    -i template_FA \
-    -p 0.2 \
-    template_FA_skeleton_mask_dst \
+    -i fa_regWarped \
+    -p 0 \
+    template_skeleton_mask_dst \
     ${FSLDIR}/data/standard/LowerCingulum_1mm \
     fa_regWarped \
-    fa_regWarped_skeletonised
-
+    fa_regWarped_skeletonised \
+    -s template_skeleton_mask
 
