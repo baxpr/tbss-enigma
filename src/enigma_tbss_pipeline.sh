@@ -99,3 +99,16 @@ tbss_skeleton \
     fa_regWarped_skeletonised \
     -s template_skeleton_mask
 
+
+# ROI extraction
+
+# Mean FA in entire skeleton
+mask_mean_FA=$(fslstats -K template_skeleton_mask fa_regWarped -m)
+echo "Mean FA in skeleton: ${mask_mean_FA}"
+
+# Mean FA in skeleton (non-zero voxels) in JHU ROIs
+fslstats \
+    -K ${enigma_dir}/ROIextraction_info/JHU-WhiteMatter-labels-1mm.nii.gz \
+    fa_regWarped \
+    -m \
+    > roi_mean_FA.csv
