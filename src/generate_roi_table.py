@@ -22,16 +22,21 @@ import argparse
 import pandas
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--md_csv', required=True)
 parser.add_argument('--fa_csv', required=True)
 parser.add_argument('--lut', required=True)
 args = parser.parse_args()
 
 roilist = pandas.read_csv(args.lut, sep='\t', header=0, names=['label', 'roi', 'roi_long'], usecols=[0, 1, 3])
 
-roivals = pandas.read_csv(args.fa_csv, names=['fa'])
-roivals['label'] = range(1, roivals.shape[0]+1)
+favals = pandas.read_csv(args.fa_csv, names=['fa'])
+favals['label'] = range(1, favals.shape[0]+1)
 
-data = roilist.merge(roivals, how='left', on='label')
+mdvals = pandas.read_csv(args.md_csv, names=['md'])
+mdvals['label'] = range(1, mdvals.shape[0]+1)
+
+data = roilist.merge(favals, how='left', on='label')
+data = data.merge(mdvals, how='left', on='label')
 
 data.to_csv('extracted_roi_means.csv', index=False)
 

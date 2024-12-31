@@ -10,7 +10,9 @@ md_niigz=../INPUTS/dwmri_tensor_md.nii.gz
 out_dir=../OUTPUTSants
 enigma_dir=../enigma
 
+# Threshold to use with MD image to create tighter brain mask
 md_threshold=0.0003
+
 
 # (1) ENIGMA-DTI template FA map, edited skeleton, masks and corresponding distance map
 #     have been copied to ../enigma
@@ -54,6 +56,15 @@ antsRegistrationSyN.sh \
     -x template_mask.nii.gz,mask.nii.gz \
     -o fa_reg \
     &> antsregistration.log
+
+# Apply warp to other images (MD)
+antsApplyTransforms -v \
+    -i md.nii.gz \
+    -r fa_regWarped.nii.gz \
+    -t fa_reg1Warp.nii.gz -t fa_reg0GenericAffine.mat \
+    -o md_regWarped.nii.gz \
+    &> antsapply.log
+
 
 # Need to do some of the stuff in tbss_3_postreg now. It is 
 # intended for a custom multi-subject template and it
@@ -99,6 +110,16 @@ tbss_skeleton \
     fa_regWarped_skeletonised \
     -s template_skeleton_mask
 
+tbss_skeleton \
+    -i md_regWarped \
+    -p 0 \
+    template_skeleton_mask_dst \
+    ${FSLDIR}/data/standard/LowerCingulum_1mm \
+    fa_regWarped \
+    md_regWarped_skeletonised \
+    -a md_regWarped \
+    -s template_skeleton_mask
+
 
 # ROI extraction
 
@@ -112,3 +133,10 @@ fslstats \
     fa_regWarped \
     -m \
     > roi_mean_FA.csv
+
+# Mean MD in skeleton (non-zero voxels) in JHU ROIs
+fslstats \
+    -K ${enigma_dir}/ROIextraction_info/JHU-WhiteMatter-labels-1mm.nii.gz \
+    md_regWarped \
+    -m \
+    > roi_mean_MD.csv
