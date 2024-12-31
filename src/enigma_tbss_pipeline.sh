@@ -88,7 +88,8 @@ antsRegistrationSyN.sh \
 
 # (8) Project warped subject FA data onto skeleton
 # What is the input image supposed to be? It affects resulting values.
-# ENIGMA protocol step 8 is using the subject FA image with -s option (ENIGMA_TBSS_protocol_USC.pdf).
+# ENIGMA protocol step 8 is using the subject FA as input image, with 
+# -s option to specify skeleton (ENIGMA_TBSS_protocol_USC.pdf).
 tbss_skeleton \
     -i fa_regWarped \
     -p 0 \
