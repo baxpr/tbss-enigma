@@ -4,7 +4,7 @@ FROM ubuntu:24.04
 RUN apt-get -y update \
     && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install \
-    sudo wget curl unzip zip xvfb ghostscript imagemagick \
+    sudo wget curl cmake unzip zip xvfb ghostscript imagemagick \
     bc dc file libfontconfig1 libfreetype6 libgl1-mesa-dev \
     libgl1-mesa-dri libglu1-mesa-dev libgomp1 libice6 libxt6 \
     libxcursor1 libxft2 libxinerama1 libxrandr2 libxrender1 \
