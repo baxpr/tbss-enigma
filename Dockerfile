@@ -59,7 +59,7 @@ RUN wget -nv -O /opt/fsl.tar.gz \
 #RUN ${FSLDIR}/etc/fslconf/fslpython_install.sh
 
 # Python3 setup
-RUN pip3 install pandas fpdf
+#RUN pip3 install pandas fpdf
 
 # Path
 ENV PATH="/opt/tbss-enigma/src:$PATH"
