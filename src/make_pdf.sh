@@ -82,16 +82,16 @@ montage \
 
 convert -size 2600x3365 xc:white \
     -gravity center \( reg.png -resize 2400x2800 \) -composite \
-    -gravity North -pointsize 40 -annotate +0+100 \
+    -gravity North -pointsize 40 -font "Nimbus-Sans" -annotate +0+100 \
         "${label_info} Template FA (red) over subj FA" \
-    -gravity SouthEast -pointsize 40 -annotate +100+100 "${thedate}" \
+    -gravity SouthEast -pointsize 40 -font "Nimbus-Sans" -annotate +100+100 "${thedate}" \
     page_reg.png
 
 convert -size 2600x3365 xc:white \
     -gravity center \( skel.png -resize 2400x2800 \) -composite \
-    -gravity North -pointsize 40 -annotate +0+100 \
+    -gravity North -pointsize 40 -font "Nimbus-Sans" -annotate +0+100 \
         "${label_info} Template skeleton (red) over subj FA" \
-    -gravity SouthEast -pointsize 40 -annotate +100+100 "${thedate}" \
+    -gravity SouthEast -pointsize 40 -font "Nimbus-Sans" -annotate +100+100 "${thedate}" \
     page_skel.png
 
 convert page_reg.png page_skel.png tbss.pdf
