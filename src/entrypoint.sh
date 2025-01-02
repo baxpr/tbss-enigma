@@ -27,5 +27,12 @@ done
 # Run pipeline
 enigma_tbss_pipeline.sh
 
+# Get ROI stats
+cd "${out_dir}"
+generate_roi_table.py \
+    --fa_csv roi_mean_FA.csv \
+    --md_csv roi_mean_MD.csv \
+    --lut "${enigma_dir}/ROIextraction_info/ENIGMA_look_up_table.txt"
+
 # Generate QC PDF
 xwrapper.sh make_pdf.sh
