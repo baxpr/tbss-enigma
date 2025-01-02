@@ -1,4 +1,4 @@
-FROM ubuntu:24.04.6
+FROM ubuntu:24.04
 
 # Initial system
 RUN apt-get -y update \
