@@ -8,7 +8,7 @@ RUN apt-get -y update \
     bc dc file libfontconfig1 libfreetype6 libgl1-mesa-dev \
     libgl1-mesa-dri libglu1-mesa-dev libgomp1 libice6 libxt6 \
     libxcursor1 libxft2 libxinerama1 libxrandr2 libxrender1 \
-    libopenblas-base language-pack-en \
+    libopenblas-dev language-pack-en \
     python3-pip \
     && \
     apt-get clean
