@@ -26,7 +26,7 @@ ENV ANTSPATH="/opt/ants-2.5.4/" \
     PATH="/opt/ants-2.5.4:$PATH"
 RUN apt-get update -qq \
     && echo "Downloading ANTs ..." \
-    && curl -fsSL -o ants.zip https://github.com/ANTsX/ANTs/releases/download/v2.5.4/ants-2.5.4-centos7-X64-gcc.zip \
+    && curl -fsSL -o ants.zip https://github.com/ANTsX/ANTs/releases/download/v2.5.4/ants-2.5.4-ubuntu-20.04-X64-gcc.zip \
     && unzip ants.zip -d /opt \
     && mv /opt/ants-2.5.4/bin/* /opt/ants-2.5.4 \
     && rm ants.zip
