@@ -13,14 +13,6 @@ RUN apt-get -y update \
     && \
     apt-get clean
 
-# Script and info install
-COPY src /opt/tbss-enigma/
-COPY README.md /opt/tbss-enigma/
-COPY enigma /opt/tbss-enigma/
-
-# ImageMagick policy update to allow PDF creation
-COPY ImageMagick-policy.xml /etc/ImageMagick-6/policy.xml
-
 # ANTS snippet from neurodocker
 ENV ANTSPATH="/opt/ants-2.5.4/" \
     PATH="/opt/ants-2.5.4:$PATH"
@@ -48,6 +40,14 @@ RUN echo "Installing FSL ..." \
 
 # Python3 setup
 RUN pip3 install pandas fpdf
+
+# ImageMagick policy update to allow PDF creation
+COPY ImageMagick-policy.xml /etc/ImageMagick-6/policy.xml
+
+# Script and info install
+COPY src /opt/tbss-enigma/src
+COPY enigma /opt/tbss-enigma/enigma
+COPY README.md /opt/tbss-enigma/
 
 # Path
 ENV PATH="/opt/tbss-enigma/src:$PATH"
