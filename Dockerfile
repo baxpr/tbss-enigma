@@ -56,7 +56,7 @@ RUN wget -nv -O /opt/fsl.tar.gz \
     rm /opt/fsl.tar.gz
 
 # FSL python installer
-RUN ${FSLDIR}/etc/fslconf/fslpython_install.sh
+#RUN ${FSLDIR}/etc/fslconf/fslpython_install.sh
 
 # Python3 setup
 RUN pip3 install pandas fpdf
