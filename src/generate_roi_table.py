@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Combine fslstats output with ENIGMA JHU ROI list to produce a readable csv.
 # Assumes 48 ROIs exist and are listed in order in the fslstats output file.

@@ -28,4 +28,4 @@ done
 enigma_tbss_pipeline.sh
 
 # Generate QC PDF
-make_pdf.sh
+xwrapper.sh make_pdf.sh
