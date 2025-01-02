@@ -1,15 +1,15 @@
-FROM ubuntu:24.04
+FROM ubuntu:20.04
 
 # Initial system
 RUN apt-get -y update \
     && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install \
-    sudo wget curl cmake git unzip zip xvfb ghostscript imagemagick \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends \
+    ca-certificates curl unzip zip \
+    nano python3 python3-pip sudo wget cmake git xvfb ghostscript imagemagick \
     bc dc file libfontconfig1 libfreetype6 libgl1-mesa-dev \
-    libgl1-mesa-dri libglu1-mesa-dev libgomp1 libice6 libxt6 \
-    libxcursor1 libxft2 libxinerama1 libxrandr2 libxrender1 \
-    libopenblas-dev language-pack-en \
-    python3-pip \
+    libgl1-mesa-dri libglu1-mesa-dev libgomp1 libice6 \
+    libopenblas-base libxcursor1 libxft2 libxinerama1 libxrandr2 libxrender1 \
+    libxt6 language-pack-en \
     && \
     apt-get clean
 
@@ -22,44 +22,33 @@ COPY enigma /opt/tbss-enigma/
 COPY ImageMagick-policy.xml /etc/ImageMagick-6/policy.xml
 
 # ANTS snippet from neurodocker
-ENV ANTSVER="2.5.4"
-ENV ANTSPATH="/opt/ants-$ANTSVER"
-ENV PATH="${ANTSPATH}/bin:$PATH"
-RUN echo "Installing ANTs ..." \
-    && mkdir -p /opt/ants-build \
-    && curl -fsSL --retry 5 https://github.com/ANTsX/ANTs/archive/refs/tags/v${ANTSVER}.tar.gz \
-       | tar -xz -C /opt/ants-build --strip-components 1 \
-    && cd /opt/ants-build && mkdir build install && cd build \
-    && cmake -DCMAKE_INSTALL_PREFIX=$ANTSPATH \
-       -DBUILD_TESTING=OFF -DRUN_LONG_TESTS=OFF -DRUN_SHORT_TESTS=OFF .. 2>&1 \
-    && make -j 4 2>&1 \
-    && cd ANTS-build \
-    && make install 2>&1 \
-    && cd /opt && rm -r /opt/ants-build
+ENV ANTSPATH="/opt/ants-2.5.4/" \
+    PATH="/opt/ants-2.5.4:$PATH"
+RUN apt-get update -qq \
+    && echo "Downloading ANTs ..." \
+    && curl -fsSL -o ants.zip https://github.com/ANTsX/ANTs/releases/download/v2.5.4/ants-2.5.4-centos7-X64-gcc.zip \
+    && unzip ants.zip -d /opt \
+    && mv /opt/ants-2.5.4/bin/* /opt/ants-2.5.4 \
+    && rm ants.zip
 
-# FSL environment vars before FSL install
-ENV FSLDIR="/opt/fsl" \
-    PATH="/opt/fsl/bin:$PATH" \
+# FSL snippet from neurodocker
+ENV FSLDIR="/opt/fsl-6.0.7.16" \
+    PATH="/opt/fsl-6.0.7.16/bin:$PATH" \
     FSLOUTPUTTYPE="NIFTI_GZ" \
     FSLMULTIFILEQUIT="TRUE" \
-    FSLTCLSH="/opt/fsl/bin/fsltclsh" \
-    FSLWISH="/opt/fsl/bin/fslwish" \
+    FSLTCLSH="/opt/fsl-6.0.7.16/bin/fsltclsh" \
+    FSLWISH="/opt/fsl-6.0.7.16/bin/fslwish" \
     FSLLOCKDIR="" \
     FSLMACHINELIST="" \
-    FSLREMOTECALL=""
+    FSLREMOTECALL="" \
+    FSLGECUDAQ="cuda.q"
+RUN echo "Installing FSL ..." \
+    && curl -fsSL https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/releases/fslinstaller.py | \
+        python3 - -d /opt/fsl-6.0.7.16 -V 6.0.7.16
 
-# Main FSL download. See https://fsl.fmrib.ox.ac.uk/fsldownloads/manifest.csv
-RUN wget -nv -O /opt/fsl.tar.gz \
-        "https://fsl.fmrib.ox.ac.uk/fsldownloads/fsl-6.0.5.2-centos7_64.tar.gz" && \
-    cd /opt && \
-    tar -zxf fsl.tar.gz && \
-    rm /opt/fsl.tar.gz
-
-# FSL python installer
-#RUN ${FSLDIR}/etc/fslconf/fslpython_install.sh
 
 # Python3 setup
-#RUN pip3 install pandas fpdf
+RUN pip3 install pandas fpdf
 
 # Path
 ENV PATH="/opt/tbss-enigma/src:$PATH"
