@@ -29,5 +29,6 @@ using ANTS, specifically `antsRegistrationSyN.sh`.
 Relevent references for this script include:
    * http://www.ncbi.nlm.nih.gov/pubmed/20851191
    * http://www.frontiersin.org/Journal/10.3389/fninf.2013.00039/abstract
+   
 For QC, a PDF is produced to show the quality of registration between subject
 and template.
