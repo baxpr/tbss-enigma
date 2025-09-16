@@ -27,7 +27,7 @@ parser.add_argument('--fa_csv', required=True)
 parser.add_argument('--lut', required=True)
 args = parser.parse_args()
 
-roilist = pandas.read_csv(args.lut, sep='\t', header=0, names=['label', 'roi', 'roi_long'], usecols=[0, 1, 3])
+roilist = pandas.read_csv(args.lut, sep='\t', names=['label', 'roi', 'roi_long'], usecols=[0, 1, 3])
 
 favals = pandas.read_csv(args.fa_csv, names=['fa'])
 favals['label'] = range(1, favals.shape[0]+1)
