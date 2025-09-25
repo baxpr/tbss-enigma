@@ -43,9 +43,6 @@ rdvals['label'] = range(1, rdvals.shape[0]+1)
 advals = pandas.read_csv(args.ad_csv, names=['ad'])
 advals['label'] = range(1, advals.shape[0]+1)
 
-v1vals = pandas.read_csv(args.v1_csv, names=['v1'])
-v1vals['label'] = range(1, v1vals.shape[0]+1)
-
 data = roilist.merge(favals, how='left', on='label')
 data = data.merge(mdvals, how='left', on='label')
 data = data.merge(rdvals, how='left', on='label')
