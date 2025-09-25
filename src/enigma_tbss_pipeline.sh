@@ -8,7 +8,6 @@
 #   md_niigz      Subject MD image
 #   rd_niigz      Subject RD image
 #   ad_niigz      Subject AD image
-#   v1_niigz      Subject V1 image
 #   out_dir       Output/working directory
 #   enigma_dir    Location of enigma files (template, skeleton, etc)
 #   md_threshold  MD threshold to use for tighter brain mask
@@ -23,7 +22,6 @@ cp "${fa_niigz}" fa_unmasked.nii.gz
 cp "${md_niigz}" md.nii.gz
 cp "${rd_niigz}" rd.nii.gz
 cp "${ad_niigz}" ad.nii.gz
-cp "${v1_niigz}" v1.nii.gz
 cp ${enigma_dir}/ENIGMA_DTI_FA.nii.gz                     template_FA.nii.gz
 cp ${enigma_dir}/ENIGMA_DTI_FA_mask.nii.gz                template_mask.nii.gz
 cp ${enigma_dir}/ENIGMA_DTI_FA_skeleton_mask.nii.gz       template_skeleton_mask.nii.gz
@@ -58,7 +56,7 @@ antsRegistrationSyN.sh \
     -o fa_reg
 
 # Apply warp to other images (MD)
-for im in md rd ad v1; do
+for im in md rd ad; do
 antsApplyTransforms -v \
     -i "${im}".nii.gz \
     -r fa_regWarped.nii.gz \
@@ -97,7 +95,7 @@ tbss_skeleton \
     -s template_skeleton_mask
 
 # Bring along other stats
-for im in md ad rd v1; do
+for im in md ad rd; do
     tbss_skeleton \
         -i "${im}"_regWarped \
         -p 0 \
@@ -116,7 +114,7 @@ mask_mean_FA=$(fslstats -K template_skeleton_mask fa_regWarped -m)
 echo "Mean FA in skeleton: ${mask_mean_FA}"
 
 # Mean stats in skeleton (non-zero voxels) in JHU ROIs
-for im in fa md ad rd v1; do
+for im in fa md ad rd; do
     fslstats \
         -K ${enigma_dir}/ROIextraction_info/JHU-WhiteMatter-labels-1mm.nii.gz \
         "${im}"_regWarped \

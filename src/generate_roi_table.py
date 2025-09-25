@@ -26,7 +26,6 @@ parser.add_argument('--fa_csv', required=True)
 parser.add_argument('--md_csv', required=True)
 parser.add_argument('--rd_csv', required=True)
 parser.add_argument('--ad_csv', required=True)
-parser.add_argument('--v1_csv', required=True)
 parser.add_argument('--lut', required=True)
 args = parser.parse_args()
 
@@ -51,7 +50,6 @@ data = roilist.merge(favals, how='left', on='label')
 data = data.merge(mdvals, how='left', on='label')
 data = data.merge(rdvals, how='left', on='label')
 data = data.merge(advals, how='left', on='label')
-data = data.merge(v1vals, how='left', on='label')
 
 data.to_csv('extracted_roi_means.csv', index=False)
 
