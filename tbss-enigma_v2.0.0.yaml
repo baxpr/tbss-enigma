@@ -1,0 +1,65 @@
+# ENIGMA TBSS protocol
+# https://github.com/baxpr/tbss-enigma
+
+---
+procyamlversion: 3.0.0-dev.0
+jobtemplate: job_template_v3.txt
+containers:
+  - name: tbss
+    path: tbss-enigma_v2.0.0.sif
+    source: docker://baxterprogers/tbss-enigma:v2.0.0
+requirements:
+  walltime: 1-0
+  memory: 8G
+
+inputs:
+  xnat:
+    assessors:
+      - name: prequal
+        proctypes: dtiQA_triple_v7
+        resources:
+          - {resource: SCALARS, ftype: FILE, fmatch: 'dwmri_tensor_fa.nii.gz', fdest: fa.nii.gz}
+          - {resource: SCALARS, ftype: FILE, fmatch: 'dwmri_tensor_md.nii.gz', fdest: md.nii.gz}
+          - {resource: SCALARS, ftype: FILE, fmatch: 'dwmri_tensor_rd.nii.gz', fdest: rd.nii.gz}
+          - {resource: SCALARS, ftype: FILE, fmatch: 'dwmri_tensor_ad.nii.gz', fdest: ad.nii.gz}
+          - {resource: SCALARS, ftype: FILE, fmatch: 'dwmri_tensor_v1.nii.gz', fdest: v1.nii.gz}
+    attrs:
+      - {varname: project, object: session, attr: project}
+      - {varname: subject, object: session, attr: subject_label}
+      - {varname: session, object: session, attr: label}
+
+outputs:
+  - {path: tbss.pdf, type: FILE, resource: PDF}
+  - {path: fa.nii.gz, type: FILE, resource: NATIVE}
+  - {path: md.nii.gz, type: FILE, resource: NATIVE}
+  - {path: rd.nii.gz, type: FILE, resource: NATIVE}
+  - {path: ad.nii.gz, type: FILE, resource: NATIVE}
+  - {path: v1.nii.gz, type: FILE, resource: NATIVE}
+  - {path: mask.nii.gz, type: FILE, resource: NATIVE}
+  - {path: fa_reg0GenericAffine.mat, type: FILE, resource: TRANSFORM}
+  - {path: fa_reg1Warp.nii.gz, type: FILE, resource: TRANSFORM}
+  - {path: fa_reg1InverseWarp.nii.gz, type: FILE, resource: TRANSFORM}
+  - {path: fa_regWarped.nii.gz, type: FILE, resource: MNI}
+  - {path: md_regWarped.nii.gz, type: FILE, resource: MNI}
+  - {path: rd_regWarped.nii.gz, type: FILE, resource: MNI}
+  - {path: ad_regWarped.nii.gz, type: FILE, resource: MNI}
+  - {path: v1_regWarped.nii.gz, type: FILE, resource: MNI}
+  - {path: fa_regWarped_skeletonised.nii.gz, type: FILE, resource: SKELETONIZED}
+  - {path: md_regWarped_skeletonised.nii.gz, type: FILE, resource: SKELETONIZED}
+  - {path: rd_regWarped_skeletonised.nii.gz, type: FILE, resource: SKELETONIZED}
+  - {path: ad_regWarped_skeletonised.nii.gz, type: FILE, resource: SKELETONIZED}
+  - {path: v1_regWarped_skeletonised.nii.gz, type: FILE, resource: SKELETONIZED}
+  - {path: extracted_roi_means.csv, type: FILE, resource: STATS}
+
+command:
+  type: singularity_run
+  container: tbss
+  args: >-
+      --fa_niigz /INPUTS/fa.nii.gz
+      --md_niigz /INPUTS/md.nii.gz
+      --rd_niigz /INPUTS/rd.nii.gz
+      --ad_niigz /INPUTS/ad.nii.gz
+      --v1_niigz /INPUTS/v1.nii.gz
+      --md_threshold 0.0003
+      --label_info "{project} {subject} {session}"
+      --out_dir /OUTPUTS
