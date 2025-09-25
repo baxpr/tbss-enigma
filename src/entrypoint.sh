@@ -5,6 +5,9 @@
 # Defaults
 export fa_niigz=/INPUTS/fa.nii.gz
 export md_niigz=/INPUTS/md.nii.gz
+export rd_niigz=/INPUTS/rd.nii.gz
+export ad_niigz=/INPUTS/ad.nii.gz
+export v1_niigz=/INPUTS/v1.nii.gz
 export enigma_dir=/opt/tbss-enigma/enigma
 export md_threshold=0.0003
 export out_dir=/OUTPUTS
@@ -16,6 +19,9 @@ while [[ $# -gt 0 ]]; do
     case $key in
         --fa_niigz)      export fa_niigz="$2";      shift; shift ;;
         --md_niigz)      export md_niigz="$2";      shift; shift ;;
+        --rd_niigz)      export rd_niigz="$2";      shift; shift ;;
+        --ad_niigz)      export ad_niigz="$2";      shift; shift ;;
+        --v1_niigz)      export v1_niigz="$2";      shift; shift ;;
         --out_dir)       export out_dir="$2";       shift; shift ;;
         --enigma_dir)    export enigma_dir="$2";    shift; shift ;;
         --md_threshold)  export md_threshold="$2";  shift; shift ;;
@@ -30,8 +36,11 @@ enigma_tbss_pipeline.sh
 # Get ROI stats
 cd "${out_dir}"
 generate_roi_table.py \
-    --fa_csv roi_mean_FA.csv \
-    --md_csv roi_mean_MD.csv \
+    --fa_csv roi_mean_fa.csv \
+    --md_csv roi_mean_md.csv \
+    --rd_csv roi_mean_rd.csv \
+    --ad_csv roi_mean_ad.csv \
+    --v1_csv roi_mean_v1.csv \
     --lut "${enigma_dir}/ROIextraction_info/ENIGMA_look_up_table.txt"
 
 # Generate QC PDF

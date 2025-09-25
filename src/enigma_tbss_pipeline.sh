@@ -6,6 +6,9 @@
 # Inputs needed from entrypoint.sh
 #   fa_niigz      Subject FA image
 #   md_niigz      Subject MD image
+#   rd_niigz      Subject RD image
+#   ad_niigz      Subject AD image
+#   v1_niigz      Subject V1 image
 #   out_dir       Output/working directory
 #   enigma_dir    Location of enigma files (template, skeleton, etc)
 #   md_threshold  MD threshold to use for tighter brain mask
@@ -18,6 +21,9 @@
 cd "${out_dir}" || exit 1
 cp "${fa_niigz}" fa_unmasked.nii.gz
 cp "${md_niigz}" md.nii.gz
+cp "${rd_niigz}" rd.nii.gz
+cp "${ad_niigz}" ad.nii.gz
+cp "${v1_niigz}" v1.nii.gz
 cp ${enigma_dir}/ENIGMA_DTI_FA.nii.gz                     template_FA.nii.gz
 cp ${enigma_dir}/ENIGMA_DTI_FA_mask.nii.gz                template_mask.nii.gz
 cp ${enigma_dir}/ENIGMA_DTI_FA_skeleton_mask.nii.gz       template_skeleton_mask.nii.gz
@@ -52,11 +58,13 @@ antsRegistrationSyN.sh \
     -o fa_reg
 
 # Apply warp to other images (MD)
+for im in md rd ad v1; do
 antsApplyTransforms -v \
-    -i md.nii.gz \
+    -i "${im}".nii.gz \
     -r fa_regWarped.nii.gz \
     -t fa_reg1Warp.nii.gz -t fa_reg0GenericAffine.mat \
-    -o md_regWarped.nii.gz
+    -o "${im}"_regWarped.nii.gz
+done
 
 
 # (5) (SKIPPED - we are using template) Remask if needed
@@ -88,15 +96,17 @@ tbss_skeleton \
     fa_regWarped_skeletonised \
     -s template_skeleton_mask
 
-tbss_skeleton \
-    -i md_regWarped \
-    -p 0 \
-    template_skeleton_mask_dst \
-    ${FSLDIR}/data/standard/LowerCingulum_1mm \
-    fa_regWarped \
-    md_regWarped_skeletonised \
-    -a md_regWarped \
-    -s template_skeleton_mask
+# Bring along other stats
+for im in md ad rd v1; do
+    tbss_skeleton \
+        -i "${im}"_regWarped \
+        -p 0 \
+        template_skeleton_mask_dst \
+        ${FSLDIR}/data/standard/LowerCingulum_1mm \
+        fa_regWarped \
+        "${im}"_regWarped_skeletonised \
+        -a "${im}"_regWarped \
+        -s template_skeleton_mask
 
 
 # ROI extraction
@@ -105,16 +115,11 @@ tbss_skeleton \
 mask_mean_FA=$(fslstats -K template_skeleton_mask fa_regWarped -m)
 echo "Mean FA in skeleton: ${mask_mean_FA}"
 
-# Mean FA in skeleton (non-zero voxels) in JHU ROIs
-fslstats \
-    -K ${enigma_dir}/ROIextraction_info/JHU-WhiteMatter-labels-1mm.nii.gz \
-    fa_regWarped \
-    -m \
-    > roi_mean_FA.csv
-
-# Mean MD in skeleton (non-zero voxels) in JHU ROIs
-fslstats \
-    -K ${enigma_dir}/ROIextraction_info/JHU-WhiteMatter-labels-1mm.nii.gz \
-    md_regWarped \
-    -m \
-    > roi_mean_MD.csv
+# Mean stats in skeleton (non-zero voxels) in JHU ROIs
+for im in fa md ad rd v1; do
+    fslstats \
+        -K ${enigma_dir}/ROIextraction_info/JHU-WhiteMatter-labels-1mm.nii.gz \
+        "${im}"_regWarped \
+        -m \
+        > roi_mean_"${im}".csv
+done

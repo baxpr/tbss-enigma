@@ -22,8 +22,11 @@ import argparse
 import pandas
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--md_csv', required=True)
 parser.add_argument('--fa_csv', required=True)
+parser.add_argument('--md_csv', required=True)
+parser.add_argument('--rd_csv', required=True)
+parser.add_argument('--ad_csv', required=True)
+parser.add_argument('--v1_csv', required=True)
 parser.add_argument('--lut', required=True)
 args = parser.parse_args()
 
@@ -35,8 +38,20 @@ favals['label'] = range(1, favals.shape[0]+1)
 mdvals = pandas.read_csv(args.md_csv, names=['md'])
 mdvals['label'] = range(1, mdvals.shape[0]+1)
 
+rdvals = pandas.read_csv(args.rd_csv, names=['rd'])
+rdvals['label'] = range(1, rdvals.shape[0]+1)
+
+advals = pandas.read_csv(args.ad_csv, names=['ad'])
+advals['label'] = range(1, advals.shape[0]+1)
+
+v1vals = pandas.read_csv(args.v1_csv, names=['v1'])
+v1vals['label'] = range(1, v1vals.shape[0]+1)
+
 data = roilist.merge(favals, how='left', on='label')
 data = data.merge(mdvals, how='left', on='label')
+data = data.merge(rdvals, how='left', on='label')
+data = data.merge(advals, how='left', on='label')
+data = data.merge(v1vals, how='left', on='label')
 
 data.to_csv('extracted_roi_means.csv', index=False)
 
