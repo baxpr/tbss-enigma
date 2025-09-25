@@ -105,6 +105,7 @@ for im in md ad rd; do
         "${im}"_regWarped_skeletonised \
         -a "${im}"_regWarped \
         -s template_skeleton_mask
+done
 
 
 # ROI extraction
