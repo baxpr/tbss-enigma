@@ -8,6 +8,7 @@
 #   md_niigz      Subject MD image
 #   rd_niigz      Subject RD image
 #   ad_niigz      Subject AD image
+#   v1_niigz      Subject V1 image
 #   out_dir       Output/working directory
 #   enigma_dir    Location of enigma files (template, skeleton, etc)
 #   md_threshold  MD threshold to use for tighter brain mask
@@ -22,6 +23,7 @@ cp "${fa_niigz}" fa_unmasked.nii.gz
 cp "${md_niigz}" md.nii.gz
 cp "${rd_niigz}" rd.nii.gz
 cp "${ad_niigz}" ad.nii.gz
+cp "${v1_niigz}" v1.nii.gz
 cp ${enigma_dir}/ENIGMA_DTI_FA.nii.gz                     template_FA.nii.gz
 cp ${enigma_dir}/ENIGMA_DTI_FA_mask.nii.gz                template_mask.nii.gz
 cp ${enigma_dir}/ENIGMA_DTI_FA_skeleton_mask.nii.gz       template_skeleton_mask.nii.gz
@@ -64,6 +66,17 @@ antsApplyTransforms -v \
     -o "${im}"_regWarped.nii.gz
 done
 
+
+# Warp template skeleton to native space
+antsApplyTransforms -v \
+    -i template_skeleton_mask.nii.gz \
+    -r fa_unmasked.nii.gz \
+    -n NearestNeighbor \
+    -t \[fa_reg0GenericAffine.mat,1\] -t fa_reg1InverseWarp.nii.gz \
+    -o native_skeleton_mask.nii.gz
+
+# Create skeleton-masked V1 image in native space
+fslmaths native_skeleton_mask -bin -mul v1 skeleton_v1
 
 # (5) (SKIPPED - we are using template) Remask if needed
 

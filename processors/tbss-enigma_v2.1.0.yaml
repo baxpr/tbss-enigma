@@ -22,6 +22,7 @@ inputs:
           - {resource: SCALARS, ftype: FILE, fmatch: 'dwmri_tensor_md.nii.gz', fdest: md.nii.gz}
           - {resource: SCALARS, ftype: FILE, fmatch: 'dwmri_tensor_rd.nii.gz', fdest: rd.nii.gz}
           - {resource: SCALARS, ftype: FILE, fmatch: 'dwmri_tensor_ad.nii.gz', fdest: ad.nii.gz}
+          - {resource: SCALARS, ftype: FILE, fmatch: 'dwmri_tensor_v1.nii.gz', fdest: v1.nii.gz}
     attrs:
       - {varname: project, object: session, attr: project}
       - {varname: subject, object: session, attr: subject_label}
@@ -33,7 +34,10 @@ outputs:
   - {path: md.nii.gz, type: FILE, resource: NATIVE}
   - {path: rd.nii.gz, type: FILE, resource: NATIVE}
   - {path: ad.nii.gz, type: FILE, resource: NATIVE}
+  - {path: v1.nii.gz, type: FILE, resource: NATIVE}
+  - {path: skeleton_v1.nii.gz, type: FILE, resource: NATIVE}
   - {path: mask.nii.gz, type: FILE, resource: NATIVE}
+  - {path: native_skeleton_mask.nii.gz, type: FILE, resource: NATIVE}
   - {path: fa_reg0GenericAffine.mat, type: FILE, resource: TRANSFORM}
   - {path: fa_reg1Warp.nii.gz, type: FILE, resource: TRANSFORM}
   - {path: fa_reg1InverseWarp.nii.gz, type: FILE, resource: TRANSFORM}
@@ -55,6 +59,7 @@ command:
       --md_niigz /INPUTS/md.nii.gz
       --rd_niigz /INPUTS/rd.nii.gz
       --ad_niigz /INPUTS/ad.nii.gz
+      --v1_niigz /INPUTS/v1.nii.gz
       --md_threshold 0.0003
       --label_info "{project} {subject} {session}"
       --out_dir /OUTPUTS

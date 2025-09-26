@@ -7,6 +7,7 @@ export fa_niigz=/INPUTS/fa.nii.gz
 export md_niigz=/INPUTS/md.nii.gz
 export rd_niigz=/INPUTS/rd.nii.gz
 export ad_niigz=/INPUTS/ad.nii.gz
+export v1_niigz=/INPUTS/v1.nii.gz
 export enigma_dir=/opt/tbss-enigma/enigma
 export md_threshold=0.0003
 export out_dir=/OUTPUTS
@@ -20,6 +21,7 @@ while [[ $# -gt 0 ]]; do
         --md_niigz)      export md_niigz="$2";      shift; shift ;;
         --rd_niigz)      export rd_niigz="$2";      shift; shift ;;
         --ad_niigz)      export ad_niigz="$2";      shift; shift ;;
+        --v1_niigz)      export v1_niigz="$2";      shift; shift ;;
         --out_dir)       export out_dir="$2";       shift; shift ;;
         --enigma_dir)    export enigma_dir="$2";    shift; shift ;;
         --md_threshold)  export md_threshold="$2";  shift; shift ;;
