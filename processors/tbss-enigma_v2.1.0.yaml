@@ -6,8 +6,8 @@ procyamlversion: 3.0.0-dev.0
 jobtemplate: job_template_v3.txt
 containers:
   - name: tbss
-    path: tbss-enigma_v2.0.1.sif
-    source: docker://baxterprogers/tbss-enigma:v2.0.1
+    path: tbss-enigma_v2.1.0.sif
+    source: docker://baxterprogers/tbss-enigma:v2.1.0
 requirements:
   walltime: 1-0
   memory: 8G
