@@ -8,11 +8,11 @@
 # and label image JHU-WhiteMatter-labels-1mm.nii.gz
 #
 # The FA and MD csvs come from fslstats like
-#  fslstats \
-#      -K ${enigma_dir}/ROIextraction_info/JHU-WhiteMatter-labels-1mm.nii.gz \
-#      fa_regWarped \
-#      -m \
-#      > roi_mean_FA.csv
+#    fslstats \
+#        -K "${src_dir}"/skeletonized_roi.nii.gz \
+#        ${im}_regWarped \
+#        -m \
+#        > "${out_dir}"/roi_mean_${im}.txt
 #
 # ROIs 1, 2 are missing in the ROI description file ENIGMA_look_up_table.txt.
 # These are (1) cerebellar white matter and (2) something in midbrain. They
@@ -21,34 +21,37 @@
 import argparse
 import pandas
 
-raise Exception('This version of stats extraction is buggy - do not use')
-
 parser = argparse.ArgumentParser()
-parser.add_argument('--fa_csv', required=True)
-parser.add_argument('--md_csv', required=True)
-parser.add_argument('--rd_csv', required=True)
-parser.add_argument('--ad_csv', required=True)
+parser.add_argument('--fa_txt', required=True)
+parser.add_argument('--md_txt', required=True)
+parser.add_argument('--rd_txt', required=True)
+parser.add_argument('--ad_txt', required=True)
+parser.add_argument('--vol_txt', required=True)
 parser.add_argument('--lut', required=True)
 args = parser.parse_args()
 
 roilist = pandas.read_csv(args.lut, sep='\t', names=['label', 'roi', 'roi_long'], usecols=[0, 1, 3])
 
-favals = pandas.read_csv(args.fa_csv, names=['fa'])
+favals = pandas.read_csv(args.fa_txt, names=['fa'])
 favals['label'] = range(1, favals.shape[0]+1)
 
-mdvals = pandas.read_csv(args.md_csv, names=['md'])
+mdvals = pandas.read_csv(args.md_txt, names=['md'])
 mdvals['label'] = range(1, mdvals.shape[0]+1)
 
-rdvals = pandas.read_csv(args.rd_csv, names=['rd'])
+rdvals = pandas.read_csv(args.rd_txt, names=['rd'])
 rdvals['label'] = range(1, rdvals.shape[0]+1)
 
-advals = pandas.read_csv(args.ad_csv, names=['ad'])
+advals = pandas.read_csv(args.ad_txt, names=['ad'])
 advals['label'] = range(1, advals.shape[0]+1)
+
+volvals = pandas.read_csv(args.vol_txt, sep=' ', usecols=[1], names=['vol_mm3'])
+volvals['label'] = range(1, volvals.shape[0]+1)
 
 data = roilist.merge(favals, how='left', on='label')
 data = data.merge(mdvals, how='left', on='label')
 data = data.merge(rdvals, how='left', on='label')
 data = data.merge(advals, how='left', on='label')
+data = data.merge(volvals, how='left', on='label')
 
 data.to_csv('extracted_roi_means.csv', index=False)
 
