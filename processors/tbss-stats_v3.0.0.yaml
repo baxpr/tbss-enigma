@@ -23,7 +23,7 @@ inputs:
 
 outputs:
   - {path: extracted_roi_means.csv, type: FILE, resource: STATS}
-  - {path: tbss-enigma/stats-fix, type: FILE, resource: SCRIPTS}
+  - {path: tbss-enigma/stats-fix, type: DIR, resource: SCRIPTS}
 
 command:
   type: singularity_exec
@@ -36,5 +36,8 @@ command:
       mv tbss-enigma-* tbss-enigma &&
       export PATH=/OUTPUTS/tbss-enigma/stats-fix:\$PATH &&
 
-      tbss-stats.sh --img_dir /INPUTS/MNI/MNI      
+      tbss-stats.sh
+        --img_dir /INPUTS/MNI/MNI
+        --src_dir /OUTPUTS/tbss-enigma
+        --out_dir /OUTPUTS
     '
