@@ -6,7 +6,6 @@
 #     src_dir      Location of this script
 #     out_dir
 
-export skel_niigz=/opt/tbss-enigma/stats-fix/skeletonized_roi.nii.gz
 export img_dir=/INPUTS/MNI
 export src_dir=/opt/tbss-enigma
 export out_dir=/OUTPUTS
@@ -14,7 +13,6 @@ export out_dir=/OUTPUTS
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
-        --skel_niigz)   export skel_niigz="$2";   shift; shift ;;
         --img_dir)      export img_dir="$2";      shift; shift ;;
         --src_dir)      export src_dir="$2";      shift; shift ;;
         --out_dir)      export out_dir="$2";      shift; shift ;;
@@ -30,6 +28,11 @@ for im in fa md ad rd; do
         "${im}_regWarped" \
         -m \
         > "${out_dir}/roi_mean_${im}.txt"
+    fslstats \
+        -K "${src_dir}/enigma/ENIGMA_DTI_FA_skeleton_mask.nii.gz" \
+        "${im}_regWarped" \
+        -m \
+        > "${out_dir}/skeleton_mean_${im}.txt"
 done
 
 # ROI volumes
@@ -38,14 +41,15 @@ fslstats \
     "${src_dir}/stats-fix/skeletonized_roi.nii.gz" \
     -v \
     > "${out_dir}/roi_volume.txt"
+fslstats \
+    -K "${src_dir}/enigma/ENIGMA_DTI_FA_skeleton_mask.nii.gz" \
+    "${src_dir}/enigma/ENIGMA_DTI_FA_skeleton_mask.nii.gz" \
+    -v \
+    > "${out_dir}/skeleton_volume.txt"
+
 
 # Reformat stats to friendly csv
-cd "${out_dir}"
-generate_correct_roi_table.py \
-    --fa_txt roi_mean_fa.txt \
-    --md_txt roi_mean_md.txt \
-    --rd_txt roi_mean_rd.txt \
-    --ad_txt roi_mean_ad.txt \
-    --vol_txt roi_volume.txt \
+generate_roi_table.py \
+    --txt_dir "${out_dir}" \
     --lut "${src_dir}/enigma/ROIextraction_info/ENIGMA_look_up_table.txt"
 
